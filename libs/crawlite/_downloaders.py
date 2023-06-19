@@ -1,24 +1,21 @@
-import typing
 from http import HTTPStatus
 
 import requests
 
-from libs.nicespider import utils
-from libs.nicespider.downloader import Downloader
-from libs.nicespider.reqresp import Request, Response
-
-if typing.TYPE_CHECKING:
-    from libs.nicespider.spider import Spider
+from libs.crawlite._core import Downloader
+from libs.crawlite._core import Request, Response
+from libs.crawlite._core import Crawler
+from libs.crawlite._utils import retry
 
 
 class HttpDownloader(Downloader):
-    def __init__(self, spider: "Spider"):
-        super().__init__(spider)
+    def __init__(self, crawler: Crawler):
+        super().__init__(crawler)
 
     def match(self, req: Request) -> bool:
         return req.url.startswith("http:") or req.url.startswith("https:")
 
-    @utils.retry()
+    @retry()
     def download(self, req: Request) -> Response:
         resp_ = requests.request(
             url=req.url,
@@ -35,4 +32,4 @@ class HttpDownloader(Downloader):
         if resp_.status_code != HTTPStatus.OK:
             raise Exception(f"HTTP {resp_.status_code}: url={req.url}")
 
-        return Response(content=resp_.content, **req.ctx)
+        return Response(content=resp_.content, headers=resp_.headers, cookies=resp_.cookies)

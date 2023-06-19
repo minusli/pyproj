@@ -1,9 +1,7 @@
 import queue
 import sys
 
-from libs.nicespider.queue._queue import Queue
-from libs.nicespider.reqresp import Request
-from libs.nicespider.utils import logger
+from libs.crawlite._core import Queue, Request
 
 
 class MemQueue(Queue):
@@ -18,8 +16,10 @@ class MemQueue(Queue):
         self.queue.put(req)
 
     def success(self, req: Request):
-        logger.info(f"Success: {req.url}")
+        print(f"Success: {req.url}")
 
     def fail(self, req: Request):
-        logger.error(f"Fail: {req.url}")
-        self.push(req=req)
+        print(f"Fail: {req.url}")
+
+    def size(self) -> int:
+        return self.queue.qsize()
