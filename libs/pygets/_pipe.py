@@ -1,3 +1,4 @@
+import hashlib
 import json
 from typing import Any, Callable, Dict
 
@@ -7,6 +8,7 @@ __pipes: Dict[str, Callable] = {
     "float": lambda v: float(v),
     "jsondump": lambda v: json.dumps(v),
     "jsonload": lambda v: json.loads(v),
+    "md5": lambda v: hashlib.md5(v.encode("utf-8")).hexdigest(),
     "%": lambda v, prec=None: __pipe_percent(v, prec),
 }
 
