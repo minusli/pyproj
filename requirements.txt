@@ -1,0 +1,8 @@
+pytest
+requests
+pymysql
+DBUtils
+dsnparse
+beautifulsoup4
+pillow
+
