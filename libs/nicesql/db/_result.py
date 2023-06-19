@@ -32,13 +32,21 @@ class Result:
 
 def fill_model(model: Model, **kwargs) -> Model:
     for k, v in kwargs.items():
+        # 合理性判断：存在且非方法
         if not hasattr(model, k):
             continue
 
-        origin_v = getattr(model, k, None)
-        if origin_v and inspect.ismethod(origin_v):
+        if inspect.ismethod(getattr(model, k, None)):
             continue
 
+        # 前置处理
+        fn_name = "decode_{}".format(k)
+        if hasattr(model, fn_name):
+            fn = getattr(model, k)
+            if inspect.ismethod(fn):
+                v = fn(v)
+
+        # field 注入
         setattr(model, k, v)
 
     return model
