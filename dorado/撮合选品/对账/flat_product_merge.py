@@ -1,3 +1,5 @@
+from dorado.撮合选品.对账.utils import check_fields, field
+
 all_merge_fields = [
     "account_id",
     "app_id",
@@ -151,41 +153,8 @@ today_merge_fields = [
     ("collect_set(marketing_tag_list)[0]", "marketing_tag_list"),
 ]
 
-
-def field(*fields):
-    for f in fields:
-        if isinstance(f, (str,)):
-            yield f
-        elif isinstance(f, (tuple,)):
-            assert len(f) == 2
-            assert isinstance(f[0], (str,))
-            assert isinstance(f[1], (str,))
-            yield "{} as {}".format(f[0], f[1])
-        else:
-            raise Exception
-
-
-def check_fields():
-    for i, f in enumerate(all_merge_fields):
-        if isinstance(f, (tuple,)):
-            f = f[1]
-
-        f1 = yesterday_merge_fields[i]
-        if isinstance(f1, (tuple,)):
-            f1 = f1[1]
-        f2 = today_fields[i]
-        if isinstance(f2, (tuple,)):
-            f2 = f2[1]
-        f3 = today_merge_fields[i]
-        if isinstance(f3, (tuple,)):
-            f3 = f3[1]
-        if not (f == f1 == f2 == f3):
-            print(f, f1, f2, f3)
-            raise Exception
-
-
 if __name__ == '__main__':
-    check_fields()
+    check_fields(all_merge_fields, yesterday_merge_fields, today_fields, today_merge_fields)
     index = "product_flat_buckets_forward_byte.es.alliance_goods_online_v2"
     stream_table = "life_alliance.ods_rocketmq_ebus_byte_es_poi_and_products"
     merge_table = "life_alliance.ods_rocketmq_ebus_byte_es_products_merge"
